@@ -1,29 +1,59 @@
 #!/usr/bin/python3
-from datetime import datetime
-import uuid
+import datetime
+import json
+from models.engine.file_storage import FileStorage
+
 
 class BaseModel:
-    def __init__(self, *args, **kwargs):
-        if kwargs:
-            for key, value in kwargs.items():
-                if key in ['created_at', 'updated_at']:
-                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
-                if key != "__class__":
-                    setattr(self, key, value)
-        else:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
 
-    def __str__(self):
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+    """
+    Base class for all AirBnB models.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize a BaseModel instance.
+        """
+        super().__init__(*args, **kwargs)
+        self.id = self._generate_uuid()
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+        if not self.id:
+            self.save()
+
+    @classmethod
+    def _generate_uuid(cls):
+        """
+        Generate a unique identifier for a new model instance.
+        """
+        return str(uuid4())
 
     def save(self):
-        self.updated_at = datetime.now()
+        """
+        Save the model to the file storage.
+        """
+        storage.new(self)
+        storage.save()
+        self.updated_at = datetime.datetime.utcnow()
 
     def to_dict(self):
-        output = self.__dict__.copy()
-        output['__class__'] = self.__class__.__name__
-        output['created_at'] = self.created_at.isoformat()
-        output['updated_at'] = self.updated_at.isoformat()
-        return output
+        """
+        Serialize the model to a dictionary.
+        """
+        dictionary = {
+            "id": self.id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            **self.__dict__,
+        }
+        return dictionary
+
+    @classmethod
+    def from_dict(cls, dictionary):
+        """
+        Deserialize a model from a dictionary.
+        """
+        instance = cls()
+        instance.__dict__ = dictionary
+        return instance
