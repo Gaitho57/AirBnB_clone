@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from datetime import datetime
 import uuid
 
@@ -7,7 +8,7 @@ class BaseModel:
             timestamp_format = '%Y-%m-%dT%H:%M:%S.%f'
             for key, value in kwargs.items():
                 if key in ['created_at', 'updated_at']:
-                    value = datetime.strptime(value, timestamp_format)
+                    value = datetime.isoformat(value)
                 if key != "__class__":
                     setattr(self, key, value)
         else:
