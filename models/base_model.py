@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 from datetime import datetime
-from models import storage
 import uuid
 
 class BaseModel:
@@ -16,16 +15,14 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            storage.new(self)
 
-    def _str_representation(self):
+    def __str__(self):
         return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
 
-    def save_and_update(self):
+    def save(self):
         self.updated_at = datetime.now()
-        storage.save()
 
-    def attributes_to_custom_dict(self):
+    def to_dict(self):
         output = self.__dict__.copy()
         output['__class__'] = self.__class__.__name__
         output['created_at'] = self.created_at.isoformat()
