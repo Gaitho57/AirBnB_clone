@@ -5,10 +5,9 @@ import uuid
 class BaseModel:
     def __init__(self, *args, **kwargs):
         if kwargs:
-            timestamp_format = '%Y-%m-%dT%H:%M:%S.%f'
             for key, value in kwargs.items():
                 if key in ['created_at', 'updated_at']:
-                    value = datetime.isoformat(value)
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
                 if key != "__class__":
                     setattr(self, key, value)
         else:
