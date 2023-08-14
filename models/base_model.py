@@ -1,59 +1,58 @@
 #!/usr/bin/python3
-import datetime
-import json
-from models.engine.file_storage import FileStorage
+import uuid
+from datetime import datetime
 
 
 class BaseModel:
-
     """
-    Base class for all AirBnB models.
+Base class for other models.
+Attributes: id: string uniquely ids each instance of the BaseModel class.
+created_at: datetime object represents the time&date when instance ws creatd.
+updated_at:datetime object represents the time&ate when instance ws last updtd.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         """
         Initialize a BaseModel instance.
-        """
-        super().__init__(*args, **kwargs)
-        self.id = self._generate_uuid()
-        self.created_at = datetime.datetime.utcnow()
-        self.updated_at = datetime.datetime.utcnow()
 
-        if not self.id:
-            self.save()
+        Args:
+            **kwargs: Keyword arguments to initialize the instance with.
+        """
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
-    @classmethod
-    def _generate_uuid(cls):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __str__(self):
         """
-        Generate a unique identifier for a new model instance.
+        Return a string representation of the instance.
+
+        Returns:
+            A string representation of the instance.
         """
-        return str(uuid4())
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """
-        Save the model to the file storage.
+        Update the updated_at attribute with the current datetime.
         """
-        storage.new(self)
-        storage.save()
-        self.updated_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.now()
 
     def to_dict(self):
         """
-        Serialize the model to a dictionary.
-        """
-        dictionary = {
-            "id": self.id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            **self.__dict__,
-        }
-        return dictionary
+        Return a dictionary representation of the instance.
 
-    @classmethod
-    def from_dict(cls, dictionary):
+        Returns:
+            A dictionary representation of the instance.
         """
-        Deserialize a model from a dictionary.
-        """
-        instance = cls()
-        instance.__dict__ = dictionary
-        return instance
+        dict_data = dict(
+            (key, value)
+            for key, value in self.__dict__.items()
+            if not key.startswith("_")
+        )
+        dict_data["__class__"] = self.__class__.__name__
+        dict_data["created_at"] = self.created_at.isoformat()
+        dict_data["updated_at"] = self.updated_at.isoformat()
+        return dict_data
