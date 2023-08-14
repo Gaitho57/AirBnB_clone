@@ -1,5 +1,5 @@
+#!/usr/bin/python3
 import json
-from models.base_model import BaseModel  # Add necessary imports here
 
 class FileStorage:
     """
@@ -44,6 +44,6 @@ class FileStorage:
                     class_name, obj_id = key.split(".")
                     cls = globals()[class_name]
                     obj = cls(**value)
-                    FileStorage.new(obj)  # Use FileStorage.new() instead of self.new()
+                    self.new(obj)
         except FileNotFoundError:
             pass
