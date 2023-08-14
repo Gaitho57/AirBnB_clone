@@ -1,10 +1,14 @@
 #!/usr/bin/python3
+"""
+A module that serializes instances to JSON file
+Also deserializes JSON file to an instance
+"""
 import json
 
 
 class FileStorage:
     """
-    Serializes instances to a JSON file and deserializes JSON file to instances.
+    This instance is responsible for storing and retrieving JSON strings
     """
 
     __file_path = "file.json"
@@ -12,39 +16,55 @@ class FileStorage:
 
     def all(self):
         """
-        Returns the dictionary __objects.
+        An instance method that returns a dictionary of all objects stored in
+        private class attribute '__objects'
         """
-        return FileStorage.__objects
+
+        return self.__objects
 
     def new(self, obj):
         """
-        Sets in __objects the obj with key <obj class name>.id.
+        An instance method that sets the '__objects' with the obj argument
         """
-        key = f"{obj.__class__.__name__}.{obj.id}"
-        FileStorage.__objects[key] = obj
+
+        key = "{}.{}".format(obj.__class__.__name__, obj.id)
+        self.__objects[key] = obj
 
     def save(self):
         """
-        Serializes __objects to the JSON file (__file_path).
+        Saves(serializes) the objects to the json file in given path
         """
-        data = {}
-        for key, value in FileStorage.__objects.items():
-            data[key] = value.to_dict()
 
-        with open(FileStorage.__file_path, "w") as file:
-            json.dump(data, file)
+        temp = {}  # temporary dictionary to hold the values for each item
+
+        for key, value in self.__objects.items():
+            temp[key] = value.to_dict()
+
+        # save the dictionary as a json file
+        with open(self.__file_path, "w", encoding="utf-8") as file_write:
+            file_write.write(json.dumps(temp))
 
     def reload(self):
         """
-        Deserializes the JSON file to __objects.
+        Retrieves(deserializes) the JSON file to '__objects' attribute
         """
+        # import the required modules
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.place import Place
+        from models.review import Review
+
         try:
-            with open(FileStorage.__file_path, "r") as file:
-                data = json.load(file)
-                for key, value in data.items():
-                    class_name, obj_id = key.split(".")
-                    cls = globals()[class_name]
-                    obj = cls(**value)
-                    self.new(obj)
+            # open the file as read only
+            with open(self.__file_path, "r", encoding="utf-8") as file_read:
+                temp = json.loads(file_read.read())  # load the json string
+                self.__objects = {}  # initialize it as empty
+                # create objects from the json file extracts
+                for key, value in temp.items():
+                    # get name of class and construct the object from it
+                    self.__objects[key] = eval(value['__class__'])(**value)
         except FileNotFoundError:
             pass
