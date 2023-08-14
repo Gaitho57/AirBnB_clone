@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import cmd
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
@@ -56,6 +55,78 @@ class HBNBCommand(cmd.Cmd):
                 commands.append(command[3:])
         return commands
 
+    # New commands
 
-if __name__ == "__main__":
-    HBNBCommand().cmdloop()
+    def do_create(self, args):
+        """Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id.
+
+        Args:
+            args: The class name of the new instance.
+
+        Example:
+            $ create BaseModel
+        """
+        if not args:
+            print("** class name missing **")
+            return
+
+        class_name = args
+        try:
+            b = BaseModel(class_name)
+            self._file_storage.save()
+            print(b.id)
+        except ValueError:
+            print("** class doesn't exist **")
+
+    def do_show(self, args):
+        """Prints the string representation of an instance based on the class name and id.
+
+        Args:
+            args: The class name and id of the instance to print.
+
+        Example:
+            $ show BaseModel 1234-1234-1234
+        """
+        if not args:
+            print("** instance id missing **")
+            return
+
+        class_name, id = args.split(" ")
+        try:
+            b = self._file_storage.get(class_name, id)
+            if b is None:
+                print("** no instance found **")
+            else:
+                print(b)
+        except ValueError:
+            print("** class doesn't exist **")
+
+    def do_destroy(self, args):
+        """Deletes an instance based on the class name and id (save the change into the JSON file).
+
+        Args:
+            args: The class name and id of the instance to delete.
+
+        Example:
+            $ destroy BaseModel 1234-1234-1234
+        """
+        if not args:
+            print("** class name missing **")
+            return
+
+        class_name, id = args.split(" ")
+        try:
+            b = self._file_storage.get(class_name, id)
+            if b is None:
+                print("** no instance found **")
+            else:
+                del self._file_storage._objects[class_name + "." + id]
+                self._file_storage.save()
+        except ValueError:
+            print("** class doesn't exist **")
+
+    def do_all(self, args):
+        """Prints all string representation of all instances based or not on the class name.
+
+        Args:
+            args: The class name (optional).
