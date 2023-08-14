@@ -1,38 +1,50 @@
 #!/usr/bin/python3
 import json
-import os
-from models.base_model import BaseModel
-from models.user import User
+
 
 class FileStorage:
+    """
+    Serializes instances to a JSON file and deserializes JSON file to instances.
+    """
+
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        return self.__objects
+        """
+        Returns the dictionary __objects.
+        """
+        return FileStorage.__objects
 
     def new(self, obj):
-        key = "{}.{}".format(obj.__class__.__name__, obj.id)
-        self.__objects[key] = obj
+        """
+        Sets in __objects the obj with key <obj class name>.id.
+        """
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        FileStorage.__objects[key] = obj
 
     def save(self):
-        temp = {}
-        for key, value in self.__objects.items():
-            temp[key] = value.to_dict()
+        """
+        Serializes __objects to the JSON file (__file_path).
+        """
+        data = {}
+        for key, value in FileStorage.__objects.items():
+            data[key] = value.to_dict()
 
-        with open(self.__file_path, "w", encoding="utf-8") as file_write:
-            json.dump(temp, file_write)
+        with open(FileStorage.__file_path, "w") as file:
+            json.dump(data, file)
 
     def reload(self):
+        """
+        Deserializes the JSON file to __objects.
+        """
         try:
-            if os.path.exists(self.__file_path):
-                with open(self.__file_path, "r", encoding="utf-8") as file_read:
-                    temp = json.load(file_read)
-                    self.__objects = {}
-                    for key, value in temp.items():
-                        class_name = value['__class__']
-                        class_ = eval(class_name) if class_name in globals() else None
-                        if class_ is not None:
-                            self.__objects[key] = class_(**value)
+            with open(FileStorage.__file_path, "r") as file:
+                data = json.load(file)
+                for key, value in data.items():
+                    class_name, obj_id = key.split(".")
+                    cls = globals()[class_name]
+                    obj = cls(**value)
+                    self.new(obj)
         except FileNotFoundError:
             pass
