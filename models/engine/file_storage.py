@@ -23,3 +23,4 @@ class FileStorage:
             with open(self.__file_path, "r") as f:
                 self.__objects = json.load(f)
 
+
