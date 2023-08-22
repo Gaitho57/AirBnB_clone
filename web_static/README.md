@@ -1,4 +1,5 @@
-0x01. AirBnB clone - Web static
+0x01. AirBnB clone - Web static project
+<<<<<<< HEAD
 
 
 Background Context
@@ -406,3 +407,5 @@ Directory: web_static
 File: 8-index.html, styles/4-common.css, styles/3-header.css, styles/3-footer.css, styles/6-filters.css, styles/8-places.css, images/
 
 
+=======
+>>>>>>> eba8861bb4a962a80c866d9aeb6815bae6bc08f7

@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+  color: #484848;
+  font-size: 14px;
+  font-family: "Circular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+header, footer {
+  width: 100%;
+}
+
+header {
+  height: 70px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+footer {
+  height: 60px;
+  border-top: 1px solid #CCCCCC;
+}
+
+.logo {
+  background-image: url("../images/logo.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: auto 50%;
+  height: 100%;
+  margin-left: 20px;
+}

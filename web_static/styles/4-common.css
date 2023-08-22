@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  padding: 0;
+  color: #484848;
+  font-size: 14px;
+  font-family: "Circular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.container {
+  max-width: 1000px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container ul li {
+  margin-bottom: 5px;
+}
+
+.popover {
+  display: none;
+  position: absolute;
+  background-color: #FAFAFA;
+  color: #484848;
+  width: 100%;
+  border: 1px solid #DDDDDD;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.locations:hover .popover,
+.amenities:hover .popover {
+  display: block;
+}
